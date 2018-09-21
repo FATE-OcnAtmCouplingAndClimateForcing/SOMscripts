@@ -9,7 +9,7 @@ rm(list = ls(all = TRUE))
 lapply(paste('package:',names(sessionInfo()$otherPkgs),sep=""),detach,character.only=TRUE,unload=TRUE)
 
 #Set the following options before running
-setwd('/Users/emilynorton/Documents/FATE_Hunsicker_Bond_OcnAtmCoupling/')
+setwd('/Users/emilynorton/Documents/FATE_Hunsicker_Bond_OcnAtmCoupling/RScripts/')
 
 #set dimensions for the som grid
 sdim1 <- 3
@@ -18,29 +18,35 @@ sdim2 <- 2
 #set shape of somgrid (options: 'hexagonal','rectangular')
 sshape <- 'hexagonal'   
 
-
 #option to set seed for reproducible results
 set.seed(9)   
 
 #set variable filenames to load - only has data for the sea points
-slpsumfile <- 'SummerAvg_1948to2018_slp.csv'
-slpwinfile <- 'WinterAvg_1948to2018_slp.csv'
-sktsumfile <- 'SummerAvg_1948to2018_skt.csv'
-sktwinfile <- 'WinterAvg_1948to2018_skt.csv'
+slpsumfile <- '../PhysicalData/SummerAvg_1948to2018_slp.csv'
+slpwinfile <- '../PhysicalData/WinterAvg_1948to2018_slp.csv'
+sktsumfile <- '../PhysicalData/SummerAvg_1948to2018_skt.csv'
+sktwinfile <- '../PhysicalData/WinterAvg_1948to2018_skt.csv'
 
-#set grid filenames to load, with only lat/lon for the sea points
-slplatfile <- 'slp_lat_sea.csv'
-slplonfile <- 'slp_lon_sea.csv'
-sktlatfile <- 'skt_lat_sea.csv'
-sktlonfile <- 'skt_lon_sea.csv'
+#set grid filenames to load, with only lat/lon for the sea points, and the indexing info for each point
+slpseaindsfile <- '../PhysicalData/slp_seainds.csv' 
+slplatvecfile <- '../PhysicalData/slp_lat_vec.csv'
+slplonvecfile <- '../PhysicalData/slp_lon_vec.csv'
 
+sktseaindsfile <- '../PhysicalData/skt_seainds.csv'
+sktlatvecfile <- '../PhysicalData/skt_lat_vec.csv'
+sktlonvecfile <- '../PhysicalData/skt_lon_vec.csv'
 
 #Determine which plots you want to see
-booCodes <- 'T'  #kohonen codes plot
-booQuality <- 'T'   #kohonen quality plot
-booCounts <- 'T'    #kohonen counts plot
-booYearNode <- 'T'  #hovmoller-esque plot of year in each node
+booCodes <- 'F'  #kohonen codes plot
+booQuality <- 'F'   #kohonen quality plot
+booCounts <- 'F'    #kohonen counts plot
+booYearNode <- 'F'  #hovmoller-esque plot of year in each node
 booGeoMap <- 'T'  #geographic map
+
+#Determine which variables you want to save as .csv files
+saveCodes <- 'F'
+saveMaps <- 'F'
+##Add filenames to save to here...!
 
 ##----------Shouldn't need to change too much below this line ----------------
 #Load kohonen (load other packages later, right before we make plots.  
@@ -55,13 +61,13 @@ sktsum <- read.csv(sktsumfile, header = FALSE)
 sktwin <- read.csv(sktwinfile, header = FALSE)
 
 #Load grid files in as matrices, and the indices ('seainds') where the data are from
-slpseaindsM <- as.matrix(read.csv('slp_seainds.csv', header = FALSE)) 
-slplatvecM <-as.matrix(read.csv('slp_lat_vec.csv', header=FALSE))
-slplonvecM <-as.matrix(read.csv('slp_lon_vec.csv', header=FALSE))
+slpseaindsM <- as.matrix(read.csv(slpseaindsfile, header = FALSE)) 
+slplatvecM <-as.matrix(read.csv(slplatvecfile, header=FALSE))
+slplonvecM <-as.matrix(read.csv(slplonvecfile, header=FALSE))
 
-sktseaindsM <- as.matrix(read.csv('skt_seainds.csv', header = FALSE)) 
-sktlatvecM <-as.matrix(read.csv('skt_lat_vec.csv', header=FALSE))
-sktlonvecM <-as.matrix(read.csv('skt_lon_vec.csv', header=FALSE))
+sktseaindsM <- as.matrix(read.csv(sktseaindsfile, header = FALSE)) 
+sktlatvecM <-as.matrix(read.csv(sktlatvecfile, header=FALSE))
+sktlonvecM <-as.matrix(read.csv(sktlonvecfile, header=FALSE))
 
 
 #Get SOMs for each of the sum/win data sets
@@ -76,20 +82,24 @@ codes.slpwin <-getCodes(som.slpwin)
 codes.sktsum <-getCodes(som.sktsum)
 codes.sktwin <-getCodes(som.sktwin)
 
-write.table(codes.slpsum, file='codes_slpsum_SOM_080818.csv', row.names=FALSE,col.names=FALSE,sep=',')
-write.table(codes.slpwin, file='codes_slpwin_SOM_080818.csv', row.names=FALSE,col.names=FALSE,sep=',')
-write.table(codes.sktsum, file='codes_sktsum_SOM_080818.csv', row.names=FALSE,col.names=FALSE,sep=',')
-write.table(codes.sktwin, file='codes_sktwin_SOM_080818.csv', row.names=FALSE,col.names=FALSE,sep=',')
+if (saveCodes == 'T') {
+write.table(codes.slpsum, file='codes_slpsum_SOM_test092118.csv', row.names=FALSE,col.names=FALSE,sep=',')
+write.table(codes.slpwin, file='codes_slpwin_SOM_test092118.csv', row.names=FALSE,col.names=FALSE,sep=',')
+write.table(codes.sktsum, file='codes_sktsum_SOM_test092118.csv', row.names=FALSE,col.names=FALSE,sep=',')
+write.table(codes.sktwin, file='codes_sktwin_SOM_test092118.csv', row.names=FALSE,col.names=FALSE,sep=',')
+}
 
 maps.slpsum <- map(som.slpsum)
 maps.slpwin <- map(som.slpwin)
 maps.sktsum <- map(som.sktsum)
 maps.sktwin <- map(som.sktwin)
 
-write.table(maps.slpsum$unit.classif, file='maps_unitclassif_slpsum_SOM.csv', row.names=FALSE,col.names=FALSE,sep=',')
-write.table(maps.slpwin$unit.classif, file='maps_unitclassif_slpwin_SOM.csv', row.names=FALSE,col.names=FALSE,sep=',')
-write.table(maps.sktsum$unit.classif, file='maps_unitclassif_sktsum_SOM.csv', row.names=FALSE,col.names=FALSE,sep=',')
-write.table(maps.sktwin$unit.classif, file='maps_unitclassif_sktwin_SOM.csv', row.names=FALSE,col.names=FALSE,sep=',')
+if (saveMaps == 'T') {
+write.table(maps.slpsum$unit.classif, file='maps_unitclassif_slpsum_SOM_test092118.csv', row.names=FALSE,col.names=FALSE,sep=',')
+write.table(maps.slpwin$unit.classif, file='maps_unitclassif_slpwin_SOM_test092118.csv', row.names=FALSE,col.names=FALSE,sep=',')
+write.table(maps.sktsum$unit.classif, file='maps_unitclassif_sktsum_SOM_test092118.csv', row.names=FALSE,col.names=FALSE,sep=',')
+write.table(maps.sktwin$unit.classif, file='maps_unitclassif_sktwin_SOM_test092118.csv', row.names=FALSE,col.names=FALSE,sep=',')
+}
 
 nodes <- sdim1*sdim2  #this is the number of nodes that all codes are grouped into
 

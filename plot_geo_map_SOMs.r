@@ -1,49 +1,58 @@
 #plot_geo_map_SOMs.r
 #Plots geographic maps of codes for each node, called in parent script runSOMs.r
 
+#require(grDevices)
+library('RColorBrewer')
+source('filled_contour3.R')
+source('filled_legend.R')
 
-
-  #  par(mfrow=c(sdim2,sdim1))  #apparently filled.contour doesn't allow multiple plots on one page - could try filled.contour2 or 3
-  #  par(mar=c(0,0,0,0), oma=c(1,1,1,1))
-  #    dev.new()
+dev.new()
+par(mfrow=c(sdim2,sdim1))
   for (node in c(1:nodes)){
-    #   for (node in 1){
-    #      par(mfrow=c(sdim2,sdim1))
-    dev.new()   #change this later so that all plots are happening on the same fig - adjust using par()
     dummy <- matrix(data=NA,nrow=73,ncol=23)
     dummy[sktseaindsM]<-codes.sktsum[node,]
-    filled.contour(x=sktlonvecM, y=rev(sktlatvecM), dummy, xlim=c(120,240), ylim=c(60,20),  nlevels=10, main=paste('Summer SST, node', node))  #this works, but doesn't mask out the land
+    filled.contour3(x=sktlonvecM, y=rev(sktlatvecM), dummy, xlim=c(120,240), ylim=c(60,20),  zlim=c(-2.5,2.5), nlevels=10, col = brewer.pal(n=10,name='RdBu'), main=paste('Summer SST, node', node))  #this works, but doesn't mask out the land
     #    filled.contour(x=sktlonvecM, y=rev(sktlatvecM), dummy, xlim=c(120,300), ylim=c(60,20), zlim=range(dummy,finite=TRUE), levels=pretty(zlim,nlevels), nlevels=10, map(add=TRUE, interior=FALSE))  
     #   filled.contour(x=sktlonvecM, y=rev(sktlatvecM), dummy, xlim=c(120,240), ylim=c(60,20), plot.axes={axis(1);axis(2);par(usr=c(120,240,20,60));map(add=TRUE,fill=TRUE); par(usr=c(-240,-120,20,60));map(projection="",add=TRUE,fill=TRUE)})  #plot western and easter hemis separately  
     # image(x=sktlonvecM, y=rev(sktlatvecM), dummy, xlim=c(120,240), ylim=c(60,20))
     # map(add=TRUE)
-    rm(dummy)
   }
+par(new = "TRUE",plt = c(0.85,0.9,0.25,0.85),las = 1,cex.axis = 1)
+filled.legend(x=sktlonvecM, y=rev(sktlatvecM), dummy, xlim=c(120,240), ylim=c(60,20),  zlim=c(-2.5,2.5), nlevels=10, col = brewer.pal(n=10,name='RdBu'))
+
   
-  for (node in c(1:nodes)){
-    dev.new()   #change this later so that all plots are happening on the same fig - adjust using par()
+dev.new()
+par(mfrow=c(sdim2,sdim1))
+for (node in c(1:nodes)){
     dummy <- matrix(data=NA,nrow=73,ncol=23)
     dummy[sktseaindsM]<-codes.sktwin[node,]
-    filled.contour(x=sktlonvecM, y=rev(sktlatvecM), dummy, xlim=c(120,240), ylim=c(60,20),  nlevels=10, main=paste('Winter SST, node', node))  #this works, but doesn't mask out the land
-    rm(dummy)
-  }
+    filled.contour3(x=sktlonvecM, y=rev(sktlatvecM), dummy, xlim=c(120,240), ylim=c(60,20), zlim=c(-2.5,2.5), nlevels=10, col = brewer.pal(n=10,name='RdBu'), main=paste('Winter SST, node', node))  #this works, but doesn't mask out the land
+}
+par(new = "TRUE",plt = c(0.85,0.9,0.25,0.85),las = 1,cex.axis = 1)
+filled.legend(x=sktlonvecM, y=rev(sktlatvecM), dummy, xlim=c(120,240), ylim=c(60,20), zlim=c(-2.5,2.5), nlevels=10, col = brewer.pal(n=10,name='RdBu'))
+
+
   
+dev.new()
+par(mfrow=c(sdim2,sdim1))
   for (node in c(1:nodes)){
-    dev.new()   #change this later so that all plots are happening on the same fig - adjust using par()
     dummy <- matrix(data=NA,nrow=55,ncol=19)
     dummy[slpseaindsM]<-codes.slpsum[node,]
-    filled.contour(x=slplonvecM, y=rev(slplatvecM), dummy, xlim=c(120,240), ylim=c(60,20),  nlevels=10, main=paste('Summer SLP, node', node))  #this works, but doesn't mask out the land
-    rm(dummy)
+    filled.contour3(x=slplonvecM, y=rev(slplatvecM), dummy, xlim=c(120,240), ylim=c(60,20),  zlim=c(-2.5,2.5), nlevels=10, col = brewer.pal(n=10,name='RdBu'), main=paste('Summer SLP, node', node))  #this works, but doesn't mask out the land
   }
-  
+par(new = "TRUE",plt = c(0.85,0.9,0.25,0.85),las = 1,cex.axis = 1)
+filled.legend(x=slplonvecM, y=rev(slplatvecM), dummy, xlim=c(120,240), ylim=c(60,20),  zlim=c(-2.5,2.5), nlevels=10, col = brewer.pal(n=10,name='RdBu'))  
+
+
+dev.new()
+par(mfrow=c(sdim2,sdim1))
   for (node in c(1:nodes)){
-    dev.new()   #change this later so that all plots are happening on the same fig - adjust using par()
     dummy <- matrix(data=NA,nrow=55,ncol=19)
     dummy[slpseaindsM]<-codes.slpwin[node,]
-    filled.contour(x=slplonvecM, y=rev(slplatvecM), dummy, xlim=c(120,240), ylim=c(60,20),  nlevels=10, main=paste('Winter SLP, node', node))  #this works, but doesn't mask out the land
-    rm(dummy)
+    filled.contour3(x=slplonvecM, y=rev(slplatvecM), dummy, xlim=c(120,240), ylim=c(60,20),  zlim=c(-2.5,2.5), nlevels=10, col = brewer.pal(n=10,name='RdBu'), main=paste('Winter SLP, node', node))  #this works, but doesn't mask out the land
   }
-  
+par(new = "TRUE",plt = c(0.85,0.9,0.25,0.85),las = 1,cex.axis = 1)
+filled.legend(x=slplonvecM, y=rev(slplatvecM), dummy, xlim=c(120,240), ylim=c(60,20),  zlim=c(-2.5,2.5), nlevels=10, col = brewer.pal(n=10,name='RdBu'))  
 
 
 
