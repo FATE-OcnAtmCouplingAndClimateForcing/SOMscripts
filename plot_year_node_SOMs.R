@@ -1,15 +1,7 @@
 #plot_year_node_SOMs.r 
 #Generates a hovmoller-esque plot for plotting the node each year was sorted into
 
-#Set the number of nodes
-#nodes = 6
-
-#Load in the files with the maps$unit_classif (i.e. the node number for each year) - generated in mapSOMs.r
-#slpsum_uclass <- as.matrix(read.csv('maps_unitclassif_slpsum_SOM.csv', header = FALSE)) 
-#slpwin_uclass <- as.matrix(read.csv('maps_unitclassif_slpwin_SOM.csv', header = FALSE)) 
-#sktsum_uclass <- as.matrix(read.csv('maps_unitclassif_sktsum_SOM.csv', header = FALSE)) 
-#sktwin_uclass <- as.matrix(read.csv('maps_unitclassif_sktwin_SOM.csv', header = FALSE)) 
-
+#Load in the node number for each year (i.e. maps$unit_classif) - generated in runSOMs.r
 slpsum_uclass <- as.matrix(maps.slpsum$unit.classif) 
 slpwin_uclass <- as.matrix(maps.slpwin$unit.classif) 
 sktsum_uclass <- as.matrix(maps.sktsum$unit.classif) 
@@ -50,8 +42,3 @@ image(c(1:6),c(1948:2017),t(sktsum_z),ylim=c(2017,1948),col='black',ylab="Year (
 
 dev.new()
 image(c(1:6),c(1949:2018),t(sktwin_z),ylim=c(2018,1949),col='black',ylab="Year (1949-2018)",xlab='Node',main='SKT Winter')
-
-
-#plot(c(1:70),maps.slpsum$unit.classif,pch=22,col=c('green','red','blue','orange','yellow','pink'),bg='yellow',cex=1.2,lwd=2)
-#plot(maps.slpsum$unit.classif,c(1:70),pch=22,col=c('black'),bg='green',cex=1.2,lwd=2)
-#plot(c(1:70),maps.slpsum$unit.classif,pch=22,col=c('black'),bg='green',cex=1.2,lwd=2)
