@@ -16,29 +16,36 @@ setwd('/Users/emilynorton/Documents/FATE_Hunsicker_Bond_OcnAtmCoupling/RScripts/
 #option to set seed for reproducible results
 set.seed(9)   
 
-# Set number of variables we're going to compare, and their grid sizes, "SLP" or "SKT" (if strictly timeseries var, it doesn't matter which one)
-compsize <- 2   #1 = univariable "som", 2 = two co-variable "xyf", 3 = multivariable "supersom"
+# Set number of variables we're going to compare, and their grid sizes, "SLP"/"HGT" (both same grid) or "SKT" (if strictly timeseries var, it doesn't matter which one)
+compsize <- 3   #1 = univariable "som", 2 = two co-variable "xyf", 3 or more = multivariable "supersom"
 
-vargrid1 <- "SLP"
+vargrid1 <- "HGT"
 vargrid2 <- "SKT" 
-vargrid3 <- "SKT"
-  
-#set variable filenames to load - only has data for the sea points
-file1 <- '../BiologyData/goa.biology.pca.1965.2012.csv'
-file2 <- '../PhysicalData/WinterAvg_1965to2012_skt.csv'
-file3 <- "NA"
+vargrid3 <- "SLP"
+vargrid4 <- "NA"
 
-#set dimensions and weights for the som grid
+#set variable filenames to load - only has data for the sea points
+#file1 <- '../BiologyData/goa.biology.pca.1965.2012.csv'
+#file2 <- '../PhysicalData/WinterAvg_1965to2012_skt.csv'
+file1 <- '../PhysicalData/MonthlyAverages/MonthlyAvg11to3_forYears1948to2018_hgt.csv'
+file2 <- '../PhysicalData/MonthlyAverages/MonthlyAvg11to3_forYears1948to2018_skt.csv'
+file3 <- '../PhysicalData/MonthlyAverages/MonthlyAvg11to1_forYears1948to2018_slp.csv'
+file4 <- "NA"
+
+#set dimensions for the som grid (2D) and shape of somgrid (options: 'hexagonal','rectangular')
 sdim1 <- 3 
 sdim2 <- 2
 
+sshape <- 'hexagonal' 
+
+# set relative weights for each variable (up to 4)
 wei1 <- 1   #weight for var 1
 wei2 <- 1   #weight for var 2
+wei3 <- 1   #weight for var 3
+wei4 <- NA  #weight for var 4
 
-#set shape of somgrid (options: 'hexagonal','rectangular')
-sshape <- 'hexagonal'   
 
-#Determine which plots you want to make (and save?)
+#Which types of plots do you want to make? 
 booCodes <- 'T'
 booQuality <- 'T'
 booCounts <- 'T'
@@ -46,10 +53,10 @@ booYearNode <- 'T'
 booGeoMap <- 'T'
 
 # Plot title name and name to save plots
-title_name <- "SOM2 xyf of SKT and biolV1,V2 for 1965-2012"   
+title_name <- "Test superSOM of HGT, SKT, SLP for 1948-2018"   
 plot_fname <- "test_plots"
 
-#Determine which variables you want to save as .csv files
+#Do you want to save SOM codes or maps as .csv files?
 saveCodes <- 'F'
 saveMaps <- 'F'
 
@@ -57,6 +64,8 @@ saveMaps <- 'F'
 codes_fname <- 'codes_TEST.csv'
 codes1_fname <- 'codes2_SOM2_xyf_biolV1andV2_withSKT_1965to2012.csv'
 codes2_fname <- 'codes2_SOM2_xyf_SKT_withbiolV1andV2_1965to2012.csv'
+codes3_fname <- 'codes2_superSOM_SLP_test.csv'
+codes4_fname <- 'codes2_superSOM_VAR_test.csv'
 
 map_fname = 'maps_unitclassif_SOM2_xyf_SKT_biolV1_v2_1965to2012.csv'
 
@@ -72,7 +81,7 @@ library(kohonen)  #for SOMs
 #Load csv file(s) and grab only the values of interest for SOM comparison (i.e. not headers)
 
 data1 <- read_csv(file1)
-data1_forSOM <- data1 %>% 
+data1_forSOM <- data1 %>%   #get rid of year column...may want to prepare in other ways, e.g. make sure all of the same years are used for both files, etc.
   select(-year)
 
 if (compsize > 1) {
@@ -84,6 +93,12 @@ if (compsize > 1) {
 if (compsize > 2){
   data3 <- read_csv(file3)
   data3_forSOM <- data3 %>% 
+    select(-year)
+}
+
+if (compsize > 3){
+  data4 <- read_csv(file4)
+  data4_forSOM <- data3 %>% 
     select(-year)
 }
 
@@ -105,8 +120,9 @@ sktlatvec <-as.matrix(read.csv(sktlatvecfile, header=FALSE))
 sktlonvec <-as.matrix(read.csv(sktlonvecfile, header=FALSE))
   
 
-#Load grid files in as matrices, and the indices ('seainds') where the data are from - NOTE: come back and fix this
-if (vargrid1 == 'SLP') {
+# Load grid files in as matrices, and the indices ('seainds') where the data are from - NOTE: 'SLP' (sea level pressure)
+# and 'HGT' (geopotential height at 200mbar) have the same grid and sea indices
+if (vargrid1 == 'SLP' | vargrid1 == 'HGT') {
 seaindsM1 <- slpseainds
 latvecM1 <- slplatvec
 lonvecM1 <- slplonvec
@@ -117,7 +133,7 @@ lonvecM1 <- sktlonvec
 }
 
 if (compsize > 1) {
-  if (vargrid2 == 'SLP') {
+  if (vargrid2 == 'SLP' | vargrid2 == 'HGT') {
     seaindsM2 <- slpseainds
     latvecM2 <- slplatvec
     lonvecM2 <- slplonvec
@@ -129,7 +145,7 @@ if (compsize > 1) {
 }
 
 if (compsize > 2) {
-  if (vargrid3 == 'SLP') {
+  if (vargrid3 == 'SLP'| vargrid3 == 'HGT') {
     seaindsM3 <- slpseainds
     latvecM3 <- slplatvec
     lonvecM3 <- slplonvec
@@ -140,17 +156,35 @@ if (compsize > 2) {
   }
 }
 
+if (compsize > 3) {
+  if (vargrid4 == 'SLP'| vargrid4 == 'HGT') {
+    seaindsM4 <- slpseainds
+    latvecM4 <- slplatvec
+    lonvecM4 <- slplonvec
+  } else if (vargrid4 == "SKT") {
+    seaindsM4 <- sktseainds
+    latvecM4 <- sktlatvec
+    lonvecM4 <- sktlonvec
+  }
+}
+
 #Run SOMs with 1 ("som"), 2 ("xyf"), or 3 or more variables ("supersom") taken into account together
 if (compsize == 1) {
   som_out <- som(scale(data1_forSOM),grid=somgrid(sdim1,sdim2,sshape))
 }
 
 if (compsize == 2) {
-  som_out <- xyf(X=scale(data1_forSOM),Y=scale(data2_forSOM),user.weights=c(1,1),grid=somgrid(sdim1,sdim2,sshape))
+  som_out <- xyf(X=scale(data1_forSOM),Y=scale(data2_forSOM),user.weights=c(wei1,wei2),grid=somgrid(sdim1,sdim2,sshape))
 }
 
 if (compsize == 3) {
-  #supersom...coming soon
+  Comb_dat <- list(scale(data1_forSOM), scale(data2_forSOM), scale(data3_forSOM))
+  som_out <- supersom(Comb_dat, user.weights=c(wei1,wei2,wei3),grid=somgrid(sdim1,sdim2,sshape))
+}
+
+if (compsize == 4) {
+  Comb_dat <- list(scale(data1_forSOM), scale(data2_forSOM), scale(data3_forSOM), scale(data4_forSOM))
+  som_out <- supersom(Comb_dat, user.weights=c(wei1,wei2,wei3,wei4),grid=somgrid(sdim1,sdim2,sshape))
 }
 
 #Get codes for the SOM

@@ -14,7 +14,7 @@ for (entry in c(1:length(maps_uclass))){
 
 #generate Hovmoller plot
 dev.new()
-image(c(1:6), c(min(data1$year):max(data1$year)), t(maps_z), 
+image(c(1:nodes), c(min(data1$year):max(data1$year)), t(maps_z), 
       ylim = c(max(data1$year), min(data1$year)),
       col = "black", ylab = "Year", xlab = "Node", main = title_name)
 
