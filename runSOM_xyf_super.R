@@ -14,10 +14,10 @@ lapply(paste('package:',names(sessionInfo()$otherPkgs),sep=""),detach,character.
 setwd('/Users/emilynorton/Documents/FATE_Hunsicker_Bond_OcnAtmCoupling/RScripts/')
 
 #option to set seed for reproducible results
-set.seed(9)   
+set.seed(10)   
 
 # Set number of variables we're going to compare 
-compsize <- 2   #1 = univariable "som", 2 = two co-variable "xyf", 3 or more = multivariable "supersom"
+compsize <- 1   #1 = univariable "som", 2 = two co-variable "xyf", 3 or more = multivariable "supersom"
 
 #set variable filenames to load - only has data for the sea points
 #NOTE: these files must contain headers and 'year' column, and must *at least* contain the temporal range of interest
@@ -26,44 +26,46 @@ compsize <- 2   #1 = univariable "som", 2 = two co-variable "xyf", 3 or more = m
 #file1 <- '../BiologyData/goa.biology.pca.1965.2012_V1only.csv'  # Contains V1 only
 #file1 <- '../BiologyData/groundfish1.csv'
 #file2 <- '../BiologyData/groundfish3.csv'
-#file2 <- '../PhysicalData/pdo_1900to2018_FebtoApr_avg.csv'     # PDO averaged Feb to Apr
+#file1 <- '../PhysicalData/pdo_1900to2018_FebtoApr_avg.csv'     # PDO averaged Feb to Apr
 #file4 <- '../PhysicalData/npgo_1950to2018_FebtoApr_avg.csv'     # NPGO averaged Feb to Apr
 
 #re-shaped spatially explicit data
-#file4 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_MLD.csv'   #MLD only available 1959-2011
+file1 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_MLD.csv'   #MLD only available 1959-2011
 #file4 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds40to65N_170to235E_MLD.csv'  
-file2 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_skt_detrend_incLat.csv'  #skt avail 1948 - 2018
+#file2 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_skt_detrend_incLat.csv'  #skt avail 1948 - 2018
 #file1 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds40to65N_170to235E_skt_detrend_incLat.csv'
-file1 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_slp_incLat.csv'  #slp avail 1948 - 2018
+#file1 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_slp_incLat.csv'  #slp avail 1948 - 2018
 #file1 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds40to65N_170to235E_slp_incLat.csv'
-#file2 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_UFLX.csv'    #UFLX avail 1948 - 2018
-#file2 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds40to65N_170to235E_UFLX.csv' 
-#file3 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_VFLX.csv'    #VFLX avail 1948 - 2018
-#file3 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds40to65N_170to235E_VFLX.csv'  
+#file2 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_UFLX_Negated.csv'    #UFLX avail 1948 - 2018
+#file2 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds40to65N_170to235E_UFLX_Negated.csv' 
+#file3 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_VFLX_Negated.csv'    #VFLX avail 1948 - 2018
+#file3 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds40to65N_170to235E_VFLX_Negated.csv'  
+#file2 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_CURL_Negated.csv'
+#file2 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds40to65N_170to235E_CURL_Negated.csv'
+#file2 <- '../PhysicalData/Averages_Reshaped/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_130to255E_CURL_Negated.csv'
 
 
-
-# Set variable grid sizes: "SLP"/"HGT" (both same grid), "SKT", "MLD", "UFLX", or "VFLX". If strictly timeseries var (e.g. biol V1), which doesn't have
+# Set variable grid sizes: "SLP"/"HGT" (both same grid), "SKT", "MLD", "UFLX", "VFLX", "CURL". If strictly timeseries var (e.g. biol V1), which doesn't have
 # a spatial grid, it doesn't matter what you choose - the slp grid will be used by default - so just use the variable name
-vargrid1 <- "SLP"
-vargrid2 <- "SKT" 
+vargrid1 <- "MLD"
+vargrid2 <- "SLP" 
 vargrid3 <- "VFLX"
 vargrid4 <- "MLD"
 
 # Set temporal range of interest  **THIS IS NEW!! And allows you to re-use input files with longer temporal ranges
-yearmin <- 1948
-yearmax <- 2018
+yearmin <- 1959
+yearmax <- 2011
 
 # Set spatial boundaries for the map grid  (seasonal averaged files must already be generated with these bounds - use matlab script "Average_PickYourMonths_SpatialBounds.m"
 # and then add a "year" column and header row)
-latmin = 20
+latmin = 40
 latmax = 65
-lonmin = 120
-lonmax = 255
+lonmin = 170
+lonmax = 235
 
 #set dimensions for the som grid (2D) and shape of somgrid (options: 'hexagonal','rectangular')
-sdim1 <- 5 
-sdim2 <- 6
+sdim1 <- 2 
+sdim2 <- 1
 sshape <- 'hexagonal' 
 
 # set relative weights for each variable (up to 4 variables)
@@ -75,14 +77,14 @@ wei4 <- 1   #weight for var 4
 
 # Which types of plots do you want to make? 
 booCodes <- 'T'
-booQuality <- 'T'
-booCounts <- 'T'
+booQuality <- 'F'
+booCounts <- 'F'
 booYearNode <- 'T'
 booGeoMap <- 'T'
 
 # Plot title name and name to save plots
-title_name <- "Reshaped SKT detrend 1948-2018"   
-plot_fname <- "test_plots"
+title_name <- ""   
+plot_fname <- "test"
 
 #Do you want to save SOM codes or maps as .csv files?
 saveCodes <- 'F'
@@ -162,6 +164,11 @@ vflxseaindsfile <- sprintf('../PhysicalData/Averages_Reshaped/VFLX_seainds_Bound
 vflxlatvecfile <- '../PhysicalData/Averages_Reshaped/VFLX_lat_vec_Bounds_OrigGrid_20to65N_120to255E.csv'
 vflxlonvecfile <- '../PhysicalData/Averages_Reshaped/VFLX_lon_vec_Bounds_OrigGrid_20to65N_120to255E.csv'
 
+curlseaindsfile <- sprintf('../PhysicalData/Averages_Reshaped/CURL_seainds_Bounds_OrigGrid_%ito%iN_%ito%iE.csv', latmin, latmax, lonmin, lonmax) 
+curllatvecfile <- '../PhysicalData/Averages_Reshaped/CURL_lat_vec_Bounds_OrigGrid_20to65N_120to255E.csv'
+curllonvecfile <- '../PhysicalData/Averages_Reshaped/CURL_lon_vec_Bounds_OrigGrid_20to65N_120to255E.csv'
+
+
 mldseaindsfile <- sprintf('../PhysicalData/Averages_Reshaped/MLD_seainds_Bounds_OrigGrid_%ito%iN_%ito%iE.csv', latmin, latmax, lonmin, lonmax) 
 mldlatvecfile <- '../PhysicalData/Averages_Reshaped/MLD_lat_vec_Bounds_OrigGrid_20to65N_120to255E.csv'
 mldlonvecfile <- '../PhysicalData/Averages_Reshaped/MLD_lon_vec_Bounds_OrigGrid_20to65N_120to255E.csv'
@@ -169,11 +176,11 @@ mldlonvecfile <- '../PhysicalData/Averages_Reshaped/MLD_lon_vec_Bounds_OrigGrid_
 glist <- c(vargrid1, vargrid2, vargrid3, vargrid4)
 grids <- glist[1:compsize]
 
-if (sum(grepl("SLP", grids, fixed=TRUE))>0){
+#if (sum(grepl("SLP", grids, fixed=TRUE))>0){                     #always load these, since they are the default for non-spatial data
 slpseainds <- as.matrix(read.csv(slpseaindsfile, header = FALSE)) 
 slplatvec <-as.matrix(read.csv(slplatvecfile, header=FALSE))
 slplonvec <-as.matrix(read.csv(slplonvecfile, header=FALSE))
-}
+#}
 
 if (sum(grepl("SKT", grids, fixed=TRUE))>0){
 sktseainds <- as.matrix(read.csv(sktseaindsfile, header = FALSE)) 
@@ -191,6 +198,12 @@ if (sum(grepl("VFLX", grids, fixed=TRUE))>0){
 vflxseainds <- as.matrix(read.csv(vflxseaindsfile, header = FALSE)) 
 vflxlatvec <-as.matrix(read.csv(vflxlatvecfile, header=FALSE))
 vflxlonvec <-as.matrix(read.csv(vflxlonvecfile, header=FALSE))
+}
+
+if (sum(grepl("CURL", grids, fixed=TRUE))>0){
+  curlseainds <- as.matrix(read.csv(curlseaindsfile, header = FALSE)) 
+  curllatvec <-as.matrix(read.csv(curllatvecfile, header=FALSE))
+  curllonvec <-as.matrix(read.csv(curllonvecfile, header=FALSE))
 }
 
 if (sum(grepl("MLD", grids, fixed=TRUE))>0){
@@ -214,6 +227,10 @@ lonvecM1 <- sktlonvec
   seaindsM1 <- vflxseainds
   latvecM1 <- vflxlatvec
   lonvecM1 <- vflxlonvec
+} else if (vargrid1 == 'CURL') {
+  seaindsM1 <- curlseainds
+  latvecM1 <- curllatvec
+  lonvecM1 <- curllonvec
 } else if (vargrid1 == 'MLD') {
   seaindsM1 <- mldseainds
   latvecM1 <- mldlatvec
@@ -237,6 +254,10 @@ if (compsize > 1) {
     seaindsM2 <- vflxseainds
     latvecM2 <- vflxlatvec
     lonvecM2 <- vflxlonvec
+  } else if (vargrid2 == 'CURL') {
+    seaindsM2 <- curlseainds
+    latvecM2 <- curllatvec
+    lonvecM2 <- curllonvec
   } else if (vargrid2 == 'MLD') {
     seaindsM2 <- mldseainds
     latvecM2 <- mldlatvec
@@ -261,6 +282,10 @@ if (compsize > 2) {
     seaindsM3 <- vflxseainds
     latvecM3 <- vflxlatvec
     lonvecM3 <- vflxlonvec
+  } else if (vargrid3 == 'CURL') {
+    seaindsM3 <- curlseainds
+    latvecM3 <- curllatvec
+    lonvecM3 <- curllonvec
   } else if (vargrid3 == 'MLD') {
     seaindsM3 <- mldseainds
     latvecM3 <- mldlatvec
@@ -285,6 +310,10 @@ if (compsize > 3) {
     seaindsM4 <- vflxseainds
     latvecM4 <- vflxlatvec
     lonvecM4 <- vflxlonvec
+  } else if (vargrid4 == 'CURL') {
+    seaindsM4 <- curlseainds
+    latvecM4 <- curllatvec
+    lonvecM4 <- curllonvec
   } else if (vargrid4 == 'MLD') {
     seaindsM4 <- mldseainds
     latvecM4 <- mldlatvec
@@ -356,5 +385,5 @@ if (booYearNode == 'T') {
 
 #Generate geographic map of averaged codes for each node
 if (booGeoMap == 'T') {
-    source('plot_geo_map_reshaped.r')
+    source('plot_geo_map.r')
 }
