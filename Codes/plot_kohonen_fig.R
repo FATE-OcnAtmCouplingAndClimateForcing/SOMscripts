@@ -1,6 +1,7 @@
-#plot_kohonen_fig.r
-# Plot figures for kohonen package, including SOM codes, quality, and counts
-# Parent script is runSOM2_xyf.r (previously mapSOM2_xyf.r)
+## plot_kohonen_fig.r
+## Emily Norton, 8/7/18
+## Plot figures for kohonen package, including SOM codes, quality, and counts
+## Parent script is runSOM2_xyf_super.r 
 
 if (booCodes == 'T') {
   dev.new()
