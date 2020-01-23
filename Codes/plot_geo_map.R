@@ -1,5 +1,6 @@
-#plot_geo_map.r
-#Plots geographic maps of codes for each node, called in parent script runSOM2_xyf.r
+## plot_geo_map.r
+## Emily Norton, 8/7/18
+## Plots geographic maps of codes for each node, called in parent script runSOM2_xyf_super.r
 
 library(fields)  #for image.plot to include legend, for two.colors (or tim.colors)
 library(maps)
