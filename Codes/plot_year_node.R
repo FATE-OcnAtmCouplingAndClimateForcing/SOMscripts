@@ -1,5 +1,6 @@
-#plot_year_node.r 
-#Generates a hovmoller-like plot for plotting the node each year was sorted into
+## plot_year_node.r 
+## Emily Norton, 8/7/18
+## Generates a hovmoller-style plot for plotting the node each year was sorted into
 
 require("grDevices") # for colors
 
