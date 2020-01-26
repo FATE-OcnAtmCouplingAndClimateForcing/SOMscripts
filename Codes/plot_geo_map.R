@@ -7,7 +7,7 @@ library(maps)
 library(mapdata)
 library(pracma)   #for meshgrid function
 
-for (d in 1:compsize) {
+for (d in 1) {
 	
 	# Get Codes
 	codestemp <- codes_out[[d]]
