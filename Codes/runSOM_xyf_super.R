@@ -7,22 +7,19 @@
 #clear any potentially interfering loaded packages
 	lapply(paste('package:',names(sessionInfo()$otherPkgs),sep=""),detach,character.only=TRUE,unload=TRUE)
 
-# Set working directory
-	setwd('')
-
 # Set seed (optional)
 	set.seed(10)   
 
 # Set number of variables to compare 
-	compsize <- 4   #1 = univariable "som", 2 = two co-variable "xyf", 3 or more = multivariable "supersom"
+	compsize <- 3   #1 = univariable "som", 2 = two co-variable "xyf", 3 or more = multivariable "supersom"
 
 # Set variable filenames to load - only include data for the sea points
 # NOTE: these files must contain headers and 'year' column, and must *at least* contain the temporal range of interest
 	filein <- NULL
-	filein[1] <- '../InputData/MonthlyAvg11to3_forYears1948to2018_Bounds40to65N_170to235E_skt_notdetrended.csv'
-	filein[2] <- '../InputData/pdo_1900to2018_FebtoApr_avg.csv'     # PDO averaged Feb to Apr
-	filein[3] <- '../InputData/npgo_1950to2018_FebtoApr_avg.csv'     # NPGO averaged Feb to Apr
-	filein[4] <- '../InputData/MonthlyAvg11to3_forYears1948to2018_Bounds40to65N_170to235E_CURL.csv'  
+	filein[1] <- '../InputData/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_skt_notdetrended.csv'
+	filein[2] <- '../InputData/PDO_JFMA.csv'     # PDO averaged Feb to Apr
+	filein[3] <- '../InputData/npgo_late.csv'     # NPGO averaged Feb to Apr
+
 
 # Set variable grids: "HGT_A", "SLP"/"HGT" (both same grid), "SKT", "MLD", "UFLX", "VFLX", "CURL". 
 # If non-spatially explicity (e.g. timeseries of biol V1, PDO, or NPGO), a default grid ("SLP") will be used to generate plots, so enter the variable name below 
@@ -30,44 +27,41 @@
 	vargrid[1] <- "SKT"		# grid for var 1
 	vargrid[2] <- "PDO" 		# grid for var 2
 	vargrid[3] <- "NPGO"		# grid for var 3
-	vargrid[4] <- "CURL"		# grid for var 4
+
 
 # Set temporal range of interest  
-	yearmin <- 1950
-	yearmax <- 1976
+	yearmin <- 1951
+	yearmax <- 2018
 
 # Set number of months per year to read in (must be the number of rows per year in the input .csv) 
 # NOTE: Each file would need this redundancy
 	nmon <- 1
 
 # Set spatial boundaries for the map grid  (requires "year" column, and row header)   
-	latmin = 40
+	latmin = 20
 	latmax = 65
-	lonmin = 170
-	lonmax = 235
+	lonmin = 120
+	lonmax = 255
 
-# Set dimensions for the som grid (2D) and shape of somgrid (options: 'hexagonal','rectangular')
+# Set dimensions for the som grid (2D) and shape of somgrid (options: 'rectangular', 'hexagonal')
 	sdim1 <- 2 
 	sdim2 <- 3
 	sshape <- 'rectangular' 
 
 # Set relative weights for each variable 
 	wei <- NULL
-	wei[1] <- 1   # weight for var 1
+	wei[1] <- 998   # weight for var 1
 	wei[2] <- 1   # weight for var 2
 	wei[3] <- 1   # weight for var 3
-	wei[4] <- 1   # weight for var 4
+
 
 
 # Select types of plots to generate (options: 'T' = true or 'F' = false)
-	booCodes <- 'T'			# Codebook vectors (standard with Kohonen package)
-	booQuality <- 'T'		# Code quality (standard with Kohonen package)
-	booCounts <- 'T'		# Code counts (standard with Kohonen package)
 	booYearNode <- 'T'		# Hovmoller-style plot of years and nodes
 	booGeoMap <- 'T'    	# Spatially-explicit map for each variable and node
 
 # Plot title and name to save plots
-	title_name <- "plot_title"    # for Year_Node plot
+	title_name <- "Year Nodes"    # for Year_Node plot
 	plot_fname <- "plot_filename"
 
 # Save SOM codes or maps as .csv files? (options: 'T' = true or 'F' = false)
@@ -189,10 +183,6 @@ varnames <- paste(c(grids),collapse='_')   # for saving files
 	if (booYearNode == 'T') {
     	source('plot_year_node.r')
 	}
-
-#Generate informational plots for kohonen
-  	source('plot_kohonen_fig.r')
-
 
 #Generate geographic map of averaged codes for each node
 	if (booGeoMap == 'T') {
