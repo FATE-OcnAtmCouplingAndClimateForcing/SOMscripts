@@ -16,9 +16,9 @@
 # Set variable filenames to load - only include data for the sea points
 # NOTE: these files must contain headers and 'year' column, and must *at least* contain the temporal range of interest
 	filein <- NULL
-	filein[1] <- '../InputData/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_skt_notdetrended.csv'
-	filein[2] <- '../InputData/PDO_JFMA.csv'     # PDO averaged Feb to Apr
-	filein[3] <- '../InputData/npgo_late.csv'     # NPGO averaged Feb to Apr
+	filein[1] <- 'InputData/MonthlyAvg11to3_forYears1948to2018_Bounds20to65N_120to255E_skt_notdetrended.csv'
+	filein[2] <- 'InputData/PDO_JFMA.csv'     # PDO averaged Feb to Apr
+	filein[3] <- 'InputData/npgo_late.csv'     # NPGO averaged Feb to Apr
 
 
 # Set variable grids: "HGT_A", "SLP"/"HGT" (both same grid), "SKT", "MLD", "UFLX", "VFLX", "CURL". 
@@ -108,14 +108,14 @@ for (d in 1:compsize) {
 # Set grid filenames to load, with only lat/lon for the sea points, and the indexing info for each point - New user will need to update for their specific grid
 
 	if (sum(vargrid[d] == c("HGT_A", "SLP", "SKT", "MLD", "UFLX", "VFLX", "CURL"))>0) {
-		seaindsfile <- sprintf('../InputData/%s_seainds_Bounds_OrigGrid_%ito%iN_%ito%iE_incLat.csv', vargrid[d],latmin, latmax, lonmin, lonmax)
-		latvecfile <- sprintf('../InputData/%s_lat_vec_Bounds_OrigGrid_20to65N_120to255E_incLat.csv', vargrid[d])
-		lonvecfile <- sprintf('../InputData/%s_lon_vec_Bounds_OrigGrid_20to65N_120to255E.csv', vargrid[d])
+		seaindsfile <- sprintf('InputData/%s_seainds_Bounds_OrigGrid_%ito%iN_%ito%iE_incLat.csv', vargrid[d],latmin, latmax, lonmin, lonmax)
+		latvecfile <- sprintf('InputData/%s_lat_vec_Bounds_OrigGrid_20to65N_120to255E_incLat.csv', vargrid[d])
+		lonvecfile <- sprintf('InputData/%s_lon_vec_Bounds_OrigGrid_20to65N_120to255E.csv', vargrid[d])
 	} else {   
 		print('grid not found, using default SLP grid')
-		seaindsfile <- sprintf('../InputData/SLP_seainds_Bounds_OrigGrid_%ito%iN_%ito%iE_incLat.csv', latmin, latmax, lonmin, lonmax)
-		latvecfile <- '../InputData/SLP_lat_vec_Bounds_OrigGrid_20to65N_120to255E_incLat.csv'
-		lonvecfile <- '../InputData/SLP_lon_vec_Bounds_OrigGrid_20to65N_120to255E.csv'
+		seaindsfile <- sprintf('InputData/SLP_seainds_Bounds_OrigGrid_%ito%iN_%ito%iE_incLat.csv', latmin, latmax, lonmin, lonmax)
+		latvecfile <- 'InputData/SLP_lat_vec_Bounds_OrigGrid_20to65N_120to255E_incLat.csv'
+		lonvecfile <- 'InputData/SLP_lon_vec_Bounds_OrigGrid_20to65N_120to255E.csv'
 	}
 
 # Load grid files in as matrices, and the indices ('seainds') indicating the spatial location for each point - NOTE: 'SLP' (sea level pressure)
